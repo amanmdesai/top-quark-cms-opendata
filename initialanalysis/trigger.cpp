@@ -17,7 +17,7 @@ Float_t Muon_Px[3];
 Float_t Muon_Py[3];
 Float_t Muon_Pz[3];
 Float_t Muon_E[3];
-
+Double_t Muon_Pt;
 m_tree->SetBranchAddress("NMuon",&NMuon);
 m_tree->SetBranchAddress("Muon_Iso",&Muon_Iso);
 
@@ -31,17 +31,21 @@ TLorentzVector muon_2;
 
 
 TH1 *h_muon_iso = new TH1F("h_iso_muon","h_iso_muon",40,-1,-1);
-TH1 *h_num_muon = new TH1I("m_num_muon","m_num_muon",5,1,5);
+TH1 *h_num_muon = new TH1F("h_num_muon","h_num_muon",7,0,7);
 TH1 *h_muon_mass = new TH1F("h_muon_mass","h_muon_mass",50,10,160);
+
 
 for(int i=0; i <m_tree->GetEntries(); i++){
 
   m_tree->GetEntry(i);
 
-  if(NMuon == 0) continue;
+  //if(NMuon == 0) continue;
   h_num_muon->Fill(NMuon);
 
   for(Int_t muon=0; muon < NMuon; muon++){
+    Muon_Pt = sqrt(Muon_Px[muon]*Muon_Px[muon] + Muon_Py[muon]*Muon_Py[muon]);
+    if(Muon_Pt < 25) continue;
+    if((Muon_Iso[muon]/Muon_Pt) > .1) continue;
     h_muon_iso->Fill(Muon_Iso[muon]);
   }
 
@@ -58,12 +62,15 @@ for(int i=0; i <m_tree->GetEntries(); i++){
 }
 
 
-TFile *save = new TFile(sample+".root","recreate");
-h_muon_iso->Write();
-h_num_muon->Write();
-h_muon_mass->Write();
-//save->Write();
-//save->Close();
+TFile *save = new TFile("analysis.root","update");
+h_muon_iso->SetName(sample+"_muon_iso");
+h_num_muon->SetName(sample+"_num_muon");
+h_muon_mass->SetName(sample+"_muon_mass");
+h_muon_iso->Write(sample+"_muon_iso",TObject::kWriteDelete);
+h_num_muon->Write(sample+"_num_muon",TObject::kWriteDelete);
+h_muon_mass->Write(sample+"_muon_mass",TObject::kWriteDelete);
+save->Write();
+save->Close();
 
 /*
 TCanvas c1;
