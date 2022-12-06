@@ -11,15 +11,16 @@
 #include <TROOT.h>
 #include <TChain.h>
 #include <TFile.h>
-
+#include <TH1.h>
+#include <TSelector.h>
+#include <vector>
 #include "Muon.h"
 
 // Header file for the classes stored in the TTree if any.
 
-class MyAnalysis {
-public :
+class MyAnalysis: public TSelector {
+  public :
    TTree          *fChain;   //!pointer to the analyzed TTree or TChain
-   Int_t           fCurrent; //!current Tree number in a TChain
 
 // Fixed size dimensions of array or collections stored in the TTree if any.
 
@@ -129,8 +130,23 @@ public :
    TBranch        *b_triggerIsoMu24;   //!
    TBranch        *b_EventWeight;   //!
 
-   MyAnalysis(TTree *tree=0);
+
+   MyAnalysis();
    virtual ~MyAnalysis();
+   virtual void Init(TTree *tree);
+   virtual Bool_t Notify();
+   virtual void initialize();
+   virtual void execute();
+   virtual void finalize();
+
+
+   TChain *m_chain = 0;
+
+   TH1 *h_muon_mass = new TH1D("muon mass"," muon mass", 120, -1, -1);
+
+   std::vector<Muon> Muons;
+
+
 };
 
 #endif
@@ -150,7 +166,6 @@ void MyAnalysis::Init(TTree *tree)
    // Set branch addresses and branch pointers
    if (!tree) return;
    fChain = tree;
-   fCurrent = -1;
    fChain->SetMakeClass(1);
 
    fChain->SetBranchAddress("NJet", &NJet, &b_NJet);
