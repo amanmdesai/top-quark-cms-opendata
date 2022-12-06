@@ -26,3 +26,5 @@ run: $(SRC) run.o
 
 clean:
 	-rm -f *.o run
+	-rm analysis.root
+	-rm *.pdf
