@@ -2,7 +2,7 @@
 #define MUON_H
 
 #include <TLorentzVector.h>
-
+#include <iostream>
 class Muon: public TLorentzVector{
 
   public:
@@ -10,8 +10,10 @@ class Muon: public TLorentzVector{
     Muon(double px, double py, double pz, double e){
       SetPxPyPzE(px, py, pz, e);
     };
-    const double muon_isolation(double iso_muon){
-      return (isolation/Pt()) <iso_cut;
+
+    const double muon_isolation(double isolation, double iso_cut){
+      std::cout << Pt() << std::endl;
+      return (isolation/Pt()) < iso_cut;
     }
 
     virtual ~Muon();

@@ -17,7 +17,7 @@ void MyAnalysis::initialize(){
 
   //TTree *m_tree = (TTree*)m_file->Get("events");
   m_chain = new TChain("events");
-  m_chain->Add("files/ttbar.root");
+  m_chain->Add("files/dy.root");
   //fChain->Get("events")
   //fChain->SetBranchAddress("NMuon",&NMuon);
 
@@ -35,16 +35,23 @@ void MyAnalysis::execute(){
 
     fChain->GetEntry(event);
 
-    Muons.clear();
+    //Muons.clear();
+    Int_t NIsomuon = 0;
+    Muon muon1, muon2;
+
     for(int muon=0; muon < NMuon; ++muon){
       Muon good_muon(Muon_Px[muon],Muon_Py[muon],Muon_Pz[muon],Muon_E[muon]);
+      if(good_muon.muon_isolation(Muon_Iso[muon], .10)){
+        ++NIsomuon;
+        if(NIsomuon==1){ muon1 = good_muon ;}
+        if(NIsomuon==2){ muon2 = good_muon ;}
+        }
+    }//muon loop ends here
+    //std::cout << NIsomuon << std::endl;
 
-
-      Muon *muon1, *muon2;
-
-
-
-      }
+    if(NIsomuon > 1){
+    h_muon_mass->Fill((muon1 + muon2).M(),EventWeight);
+    }
     }//chain loop
 } // end of execute
 

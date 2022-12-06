@@ -142,10 +142,9 @@ class MyAnalysis: public TSelector {
 
    TChain *m_chain = 0;
 
-   TH1 *h_muon_mass = new TH1D("muon mass"," muon mass", 120, -1, -1);
+   TH1 *h_muon_mass = new TH1D("muon mass"," muon mass", 40, -1, -1);
 
    std::vector<Muon> Muons;
-
 
 };
 
