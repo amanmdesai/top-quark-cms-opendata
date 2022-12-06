@@ -10,16 +10,17 @@ MyAnalysis::MyAnalysis(){
 }
 
 
-void MyAnalysis::initialize(){
+void MyAnalysis::initialize(TString fileName){
 //initialize the histograms, output trees
 
   //TFile *m_file = new TFile(filepath,"read");
 
-  //TTree *m_tree = (TTree*)m_file->Get("events");
+  h_muon_mass = new TH1D(fileName+"_muon_mass",fileName+" _muon_mass", 40, 60, 120);
+  h_NIsomuon = new TH1D(fileName+"_iso_muon",fileName+" _iso_muon", 10, 0, 10);
+
+
   m_chain = new TChain("events");
-  m_chain->Add("files/dy.root");
-  //fChain->Get("events")
-  //fChain->SetBranchAddress("NMuon",&NMuon);
+  m_chain->Add("files/"+fileName+".root");
 
 } // end of initialize
 
@@ -48,22 +49,37 @@ void MyAnalysis::execute(){
         }
     }//muon loop ends here
     //std::cout << NIsomuon << std::endl;
-
+    h_NIsomuon->Fill(NIsomuon,EventWeight);
     if(NIsomuon > 1){
     h_muon_mass->Fill((muon1 + muon2).M(),EventWeight);
     }
     }//chain loop
 } // end of execute
 
-void MyAnalysis::finalize(){
-//initialize the codes
-TCanvas c;
+void MyAnalysis::finalize(TString sample){
+//finalize storage
+
+TFile *store = new TFile("analysis.root","update");
+h_muon_mass->Write();//sample+"_muon_mass",TObject::kWriteDelete);
+h_NIsomuon->Write();//sample+"_iso_muon",TObject::kWriteDelete);
+store->Write();
+store->Close();
+
+/*
+TCanvas c1;
 h_muon_mass->Draw("hist");
-c.SaveAs("hist.pdf");
+c1.SaveAs("hist.pdf");
+
+TCanvas c2;
+h_NIsomuon->Draw("hist");
+c2.SaveAs("NIsomuon.pdf");
+*/
 }
 
 
 
 MyAnalysis::~MyAnalysis(){
   //
+  delete h_muon_mass;
+  delete h_NIsomuon;
 }

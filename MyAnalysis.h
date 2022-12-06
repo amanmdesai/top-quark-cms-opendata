@@ -135,15 +135,17 @@ class MyAnalysis: public TSelector {
    virtual ~MyAnalysis();
    virtual void Init(TTree *tree);
    virtual Bool_t Notify();
-   virtual void initialize();
+   virtual void initialize(TString fileName);
    virtual void execute();
-   virtual void finalize();
+   virtual void finalize(TString sample);
 
 
    TChain *m_chain = 0;
 
-   TH1 *h_muon_mass = new TH1D("muon mass"," muon mass", 40, -1, -1);
-
+   //TH1 *h_muon_mass = new TH1D("muon mass"," muon mass", 40, -1, -1);
+   //TH1 *h_NIsomuon = new TH1D("isolated muons counts"," isolated muons counts", 10, 0, 10);
+   TH1 *h_muon_mass=0;
+   TH1 *h_NIsomuon=0;
    std::vector<Muon> Muons;
 
 };
