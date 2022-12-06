@@ -131,57 +131,11 @@ public :
 
    MyAnalysis(TTree *tree=0);
    virtual ~MyAnalysis();
-   virtual Int_t    Cut(Long64_t entry);
-   virtual Int_t    GetEntry(Long64_t entry);
-   virtual Long64_t LoadTree(Long64_t entry);
-   virtual void     Init(TTree *tree);
-   virtual void     Loop();
-   virtual Bool_t   Notify();
-   virtual void     Show(Long64_t entry = -1);
 };
 
 #endif
 
 #ifdef MyAnalysis_cxx
-MyAnalysis::MyAnalysis(TTree *tree) : fChain(0)
-{
-// if parameter tree is not specified (or zero), connect the file
-// used to generate this class and read the Tree.
-   if (tree == 0) {
-      TFile *f = (TFile*)gROOT->GetListOfFiles()->FindObject("ttbar.root");
-      if (!f || !f->IsOpen()) {
-         f = new TFile("ttbar.root");
-      }
-      f->GetObject("events",tree);
-
-   }
-   Init(tree);
-}
-
-MyAnalysis::~MyAnalysis()
-{
-   if (!fChain) return;
-   delete fChain->GetCurrentFile();
-}
-
-Int_t MyAnalysis::GetEntry(Long64_t entry)
-{
-// Read contents of entry.
-   if (!fChain) return 0;
-   return fChain->GetEntry(entry);
-}
-Long64_t MyAnalysis::LoadTree(Long64_t entry)
-{
-// Set the environment to read one entry
-   if (!fChain) return -5;
-   Long64_t centry = fChain->LoadTree(entry);
-   if (centry < 0) return centry;
-   if (fChain->GetTreeNumber() != fCurrent) {
-      fCurrent = fChain->GetTreeNumber();
-      Notify();
-   }
-   return centry;
-}
 
 void MyAnalysis::Init(TTree *tree)
 {
@@ -250,7 +204,6 @@ void MyAnalysis::Init(TTree *tree)
    fChain->SetBranchAddress("NPrimaryVertices", &NPrimaryVertices, &b_NPrimaryVertices);
    fChain->SetBranchAddress("triggerIsoMu24", &triggerIsoMu24, &b_triggerIsoMu24);
    fChain->SetBranchAddress("EventWeight", &EventWeight, &b_EventWeight);
-   Notify();
 }
 
 Bool_t MyAnalysis::Notify()
@@ -264,18 +217,4 @@ Bool_t MyAnalysis::Notify()
    return kTRUE;
 }
 
-void MyAnalysis::Show(Long64_t entry)
-{
-// Print contents of entry.
-// If entry is not specified, print current entry
-   if (!fChain) return;
-   fChain->Show(entry);
-}
-Int_t MyAnalysis::Cut(Long64_t entry)
-{
-// This function may be called from Loop.
-// returns  1 if entry is accepted.
-// returns -1 otherwise.
-   return 1;
-}
 #endif // #ifdef MyAnalysis_cxx
