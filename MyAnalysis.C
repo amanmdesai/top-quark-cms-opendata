@@ -15,8 +15,11 @@ void MyAnalysis::initialize(TString fileName){
 
   //TFile *m_file = new TFile(filepath,"read");
 
-  h_muon_mass = new TH1D(fileName+"_muon_mass",fileName+" _muon_mass", 40, 60, 120);
-  h_NIsomuon = new TH1D(fileName+"_iso_muon",fileName+" _iso_muon", 10, 0, 10);
+  h_muon_mass = new TH1D(fileName+"_muon_mass",fileName+" _muon_mass", 60, 60, 120);
+  h_NIsomuon = new TH1D(fileName+"_iso_muon",fileName+" _iso_muon", 7, 0, 7);
+  h_muon_lead_pt = new TH1D(fileName+"_muon_lead_pt",fileName+" _muon_lead_pt", 90, 20, 200);
+  h_muon_sublead_pt = new TH1D(fileName+"_muon_sublead_pt",fileName+" _muon_sublead_pt", 75, 0, 150);
+
 
 
   m_chain = new TChain("events");
@@ -30,7 +33,6 @@ void MyAnalysis::execute(){
     throw std::runtime_error("chain not initialized");
     }
   Init(m_chain);
-
 
   for(Int_t event=0; event < fChain->GetEntries() ; event++){
 
@@ -50,20 +52,29 @@ void MyAnalysis::execute(){
     }//muon loop ends here
     //std::cout << NIsomuon << std::endl;
     h_NIsomuon->Fill(NIsomuon,EventWeight);
-    if(NIsomuon > 1){
-    h_muon_mass->Fill((muon1 + muon2).M(),EventWeight);
-    }
-    }//chain loop
+    if(NIsomuon > 1 && triggerIsoMu24 && muon1.Pt()>25.){
+
+      h_muon_mass->Fill((muon1 + muon2).M(),EventWeight);
+      h_muon_lead_pt->Fill(muon1.Pt(),EventWeight);
+      h_muon_sublead_pt->Fill(muon2.Pt(),EventWeight);
+
+    }//muon filling
+
+  }//chain loop
+
 } // end of execute
 
 void MyAnalysis::finalize(TString sample){
 //finalize storage
 
 TFile *store = new TFile("analysis.root","update");
-h_muon_mass->Write();//sample+"_muon_mass",TObject::kWriteDelete);
-h_NIsomuon->Write();//sample+"_iso_muon",TObject::kWriteDelete);
+h_muon_mass->Write();
+h_NIsomuon->Write();
+h_muon_lead_pt->Write();
+h_muon_sublead_pt->Write();
 store->Write();
 store->Close();
+//sample+"_iso_muon",TObject::kWriteDelete);
 
 /*
 TCanvas c1;
@@ -82,4 +93,9 @@ MyAnalysis::~MyAnalysis(){
   //
   delete h_muon_mass;
   delete h_NIsomuon;
+
+  delete h_muon_lead_pt;
+  delete h_muon_sublead_pt;
+
+
 }

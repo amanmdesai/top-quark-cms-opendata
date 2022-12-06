@@ -146,6 +146,10 @@ class MyAnalysis: public TSelector {
    //TH1 *h_NIsomuon = new TH1D("isolated muons counts"," isolated muons counts", 10, 0, 10);
    TH1 *h_muon_mass=0;
    TH1 *h_NIsomuon=0;
+   TH1 *h_muon_lead_pt=0;
+   TH1 *h_muon_sublead_pt=0;
+
+
    std::vector<Muon> Muons;
 
 };
