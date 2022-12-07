@@ -2,13 +2,15 @@ import ROOT
 
 make_hist = {}
 
-sample = ["ttbar","wjets","dy","ww","wz","zz","qcd","single_top","data"]
+sample = ["data","ttbar","dy","wjets","ww","wz","zz","qcd","single_top"]
 
-color = [ROOT.kYellow, ROOT.kPink, ROOT.kGray, ROOT.kOrange, ROOT.kCyan, ROOT.kRed, ROOT.kGreen, ROOT.kBlue,ROOT.kBlack]
+#legend_name = ["t\bar{t} Signal","wjets","dy","ww","wz","zz","qcd","single_top","data"]
+
+color = [ROOT.kBlack,ROOT.kYellow, ROOT.kPink-3, ROOT.kGray, ROOT.kOrange, ROOT.kCyan, ROOT.kRed+1, ROOT.kGreen, ROOT.kBlue]
 file = ROOT.TFile("analysis.root","READONLY")
 
-histogram = ["_iso_muon", "_muon_mass","_muon_lead_pt","_muon_sublead_pt"]
-Xtitle = ["Number of Muons", "m_{\mu\mu} [GeV]","Leading Muon Pt [GeV]","Subleading Muon Pt [GeV]" ]
+histogram = ["_iso_muon", "_muon_mass","_muon_lead_pt","_muon_sublead_pt","_muon_lead_eta","_muon_sublead_eta","_MET","_Njet"]
+Xtitle = ["Number of Muons", "m_{\mu\mu} [GeV]","Leading Muon Pt [GeV]","Subleading Muon Pt [GeV]", "Leading Muon \eta","Subleading Muon \eta","Missing transverse energy [GeV]","Number of Jets" ]
 j=0
 print(len(histogram))
 for h in histogram:
@@ -22,7 +24,7 @@ for h in histogram:
         make_hist[sample[i]] = file.Get(sample[i]+h)
         make_hist[sample[i]].Sumw2()
 
-        if(i==8):
+        if(i==0):
             make_hist[sample[i]].SetMarkerStyle(20)
             make_hist[sample[i]].SetMarkerColor(color[i])
             entry=legend.AddEntry(make_hist[ sample[i] ],sample[i],"p")

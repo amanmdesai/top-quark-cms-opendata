@@ -10,7 +10,7 @@ LFLAGS =
 RCXX=$(CFLAGS) $(ROOTCFLAGS)
 RLXX=$(LFLAGS) $(ROOTLIBS)
 
-SRC= Analysis.o Muon.o
+SRC= Analysis.o Muon.o Jet.o Met.o
 
 %.o: %.C
 		$(CXX) $(RCXX) -c $<

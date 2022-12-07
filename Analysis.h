@@ -15,6 +15,8 @@
 #include <TSelector.h>
 #include <vector>
 #include "Muon.h"
+#include "Jet.h"
+#include "Met.h"
 
 // Header file for the classes stored in the TTree if any.
 
@@ -148,9 +150,13 @@ class Analysis: public TSelector {
    TH1 *h_NIsomuon=0;
    TH1 *h_muon_lead_pt=0;
    TH1 *h_muon_sublead_pt=0;
-
+   TH1 *h_muon_lead_eta=0;
+   TH1 *h_muon_sublead_eta=0;
+   TH1 *h_MET=0;
+   TH1 *h_Njet=0;
 
    std::vector<Muon> Muons;
+   std::vector<Jet> Jets;
 
 };
 

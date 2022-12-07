@@ -15,10 +15,17 @@ void Analysis::initialize(TString fileName){
 
   //TFile *m_file = new TFile(filepath,"read");
 
-  h_muon_mass = new TH1D(fileName+"_muon_mass",fileName+" _muon_mass", 60, 60, 120);
+  h_muon_mass = new TH1D(fileName+"_muon_mass",fileName+" _muon_mass", 75, 0, 150);
   h_NIsomuon = new TH1D(fileName+"_iso_muon",fileName+" _iso_muon", 7, 0, 7);
   h_muon_lead_pt = new TH1D(fileName+"_muon_lead_pt",fileName+" _muon_lead_pt", 90, 20, 200);
   h_muon_sublead_pt = new TH1D(fileName+"_muon_sublead_pt",fileName+" _muon_sublead_pt", 75, 0, 150);
+
+  h_muon_lead_eta = new TH1D(fileName+"_muon_lead_eta",fileName+" _muon_lead_eta", 30, -3, 3);
+  h_muon_sublead_eta = new TH1D(fileName+"_muon_sublead_eta",fileName+" _muon_sublead_eta", 30, -3, 3);
+
+  h_MET = new TH1D(fileName+"_MET",fileName+" _MET", 10, 0, 100);
+
+  h_Njet = new TH1F(fileName+"_Njet",fileName+" _Njet", 10, 0, 10);
 
 
 
@@ -38,9 +45,18 @@ void Analysis::execute(){
 
     fChain->GetEntry(event);
 
-    //Muons.clear();
+
     Int_t NIsomuon = 0;
     Muon muon1, muon2;
+
+    Met MET(MET_px, MET_py);
+    if(MET.Met_Pt() < 30) continue;
+    if(NJet < 2) continue;
+    if(NMuon < 2) continue;
+
+    h_MET->Fill(MET.Met_Pt(),EventWeight);
+    h_Njet->Fill(NJet,EventWeight);
+
 
     for(int muon=0; muon < NMuon; ++muon){
       Muon good_muon(Muon_Px[muon],Muon_Py[muon],Muon_Pz[muon],Muon_E[muon]);
@@ -52,11 +68,16 @@ void Analysis::execute(){
     }//muon loop ends here
     //std::cout << NIsomuon << std::endl;
     h_NIsomuon->Fill(NIsomuon,EventWeight);
-    if(NIsomuon > 1 && triggerIsoMu24 && muon1.Pt()>25.){
 
-      h_muon_mass->Fill((muon1 + muon2).M(),EventWeight);
-      h_muon_lead_pt->Fill(muon1.Pt(),EventWeight);
-      h_muon_sublead_pt->Fill(muon2.Pt(),EventWeight);
+    if(NIsomuon > 1 && triggerIsoMu24 && muon1.Pt()>25. && abs(muon1.Eta())<2.4 && abs(muon1.Eta())<2.4){
+      double mass = (muon1 + muon2).M();
+      if(mass > 106 || mass < 76 || mass < 12){
+        h_muon_mass->Fill(mass,EventWeight);
+        h_muon_lead_pt->Fill(muon1.Pt(),EventWeight);
+        h_muon_sublead_pt->Fill(muon2.Pt(),EventWeight);
+        h_muon_lead_eta->Fill(muon1.Eta(),EventWeight);
+        h_muon_sublead_eta->Fill(muon2.Eta(),EventWeight);
+      }
 
     }//muon filling
 
@@ -72,6 +93,10 @@ h_muon_mass->Write();
 h_NIsomuon->Write();
 h_muon_lead_pt->Write();
 h_muon_sublead_pt->Write();
+h_muon_lead_eta->Write();
+h_muon_sublead_eta->Write();
+h_MET->Write();
+h_Njet->Write();
 store->Write();
 store->Close();
 //sample+"_iso_muon",TObject::kWriteDelete);
