@@ -1,16 +1,16 @@
-#define MyAnalysis_cxx
-#include "MyAnalysis.h"
+#define Analysis_cxx
+#include "Analysis.h"
 #include <TStyle.h>
 #include <TCanvas.h>
 #include <iostream>
 using namespace std;
 
-MyAnalysis::MyAnalysis(){
+Analysis::Analysis(){
   Init(m_chain);
 }
 
 
-void MyAnalysis::initialize(TString fileName){
+void Analysis::initialize(TString fileName){
 //initialize the histograms, output trees
 
   //TFile *m_file = new TFile(filepath,"read");
@@ -27,7 +27,7 @@ void MyAnalysis::initialize(TString fileName){
 
 } // end of initialize
 
-void MyAnalysis::execute(){
+void Analysis::execute(){
 //run the analysis code here
   if(!m_chain) {
     throw std::runtime_error("chain not initialized");
@@ -64,7 +64,7 @@ void MyAnalysis::execute(){
 
 } // end of execute
 
-void MyAnalysis::finalize(TString sample){
+void Analysis::finalize(TString sample){
 //finalize storage
 
 TFile *store = new TFile("analysis.root","update");
@@ -89,7 +89,7 @@ c2.SaveAs("NIsomuon.pdf");
 
 
 
-MyAnalysis::~MyAnalysis(){
+Analysis::~Analysis(){
   //
   delete h_muon_mass;
   delete h_NIsomuon;

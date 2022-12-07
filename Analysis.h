@@ -5,8 +5,8 @@
 // found on file: ttbar.root
 //////////////////////////////////////////////////////////
 
-#ifndef MyAnalysis_h
-#define MyAnalysis_h
+#ifndef Analysis_h
+#define Analysis_h
 
 #include <TROOT.h>
 #include <TChain.h>
@@ -18,7 +18,7 @@
 
 // Header file for the classes stored in the TTree if any.
 
-class MyAnalysis: public TSelector {
+class Analysis: public TSelector {
   public :
    TTree          *fChain;   //!pointer to the analyzed TTree or TChain
 
@@ -131,8 +131,8 @@ class MyAnalysis: public TSelector {
    TBranch        *b_EventWeight;   //!
 
 
-   MyAnalysis();
-   virtual ~MyAnalysis();
+   Analysis();
+   virtual ~Analysis();
    virtual void Init(TTree *tree);
    virtual Bool_t Notify();
    virtual void initialize(TString fileName);
@@ -156,9 +156,9 @@ class MyAnalysis: public TSelector {
 
 #endif
 
-#ifdef MyAnalysis_cxx
+#ifdef Analysis_cxx
 
-void MyAnalysis::Init(TTree *tree)
+void Analysis::Init(TTree *tree)
 {
    // The Init() function is called when the selector needs to initialize
    // a new tree or chain. Typically here the branch addresses and branch
@@ -226,7 +226,7 @@ void MyAnalysis::Init(TTree *tree)
    fChain->SetBranchAddress("EventWeight", &EventWeight, &b_EventWeight);
 }
 
-Bool_t MyAnalysis::Notify()
+Bool_t Analysis::Notify()
 {
    // The Notify() function is called when a new file is opened. This
    // can be either for a new TTree in a TChain or when when a new TTree
@@ -237,4 +237,4 @@ Bool_t MyAnalysis::Notify()
    return kTRUE;
 }
 
-#endif // #ifdef MyAnalysis_cxx
+#endif // #ifdef Analysis_cxx

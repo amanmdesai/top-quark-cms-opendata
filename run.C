@@ -1,8 +1,8 @@
-#include "MyAnalysis.h"
+#include "Analysis.h"
 #include <iostream>
 int main(){
 
-MyAnalysis A[9];
+Analysis A[9];
 TString sample[9] = {"data","ttbar","dy","qcd","single_top","wjets","ww","wz","zz"};
 for(Int_t i=0; i < 9; i++){
   A[i].initialize(sample[i]);
@@ -10,7 +10,7 @@ for(Int_t i=0; i < 9; i++){
   A[i].finalize(sample[i]);
 };
 
-/*MyAnalysis *A = new MyAnalysis();
+/*Analysis *A = new Analysis();
 A->initialize("dy");
 A->execute();
 A->finalize("dy");

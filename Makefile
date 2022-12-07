@@ -10,14 +10,14 @@ LFLAGS =
 RCXX=$(CFLAGS) $(ROOTCFLAGS)
 RLXX=$(LFLAGS) $(ROOTLIBS)
 
-SRC= MyAnalysis.o Muon.o
+SRC= Analysis.o Muon.o
 
 %.o: %.C
 		$(CXX) $(RCXX) -c $<
 
 all: run
 
-run.o: run.C MyAnalysis.h
+run.o: run.C Analysis.h
 		$(CXX) $(RCXX) -c $<
 
 run: $(SRC) run.o
